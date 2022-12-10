@@ -9,7 +9,7 @@ const cors = require("cors");
 app.use(cors());
 app.use(express.json());
 
-const uri = `mongodb://localhost:27017/products-redux-db`;
+const uri = `mongodb://localhost:27017/blogs-redux-db`;
 const client = new MongoClient(uri, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
@@ -18,37 +18,35 @@ const client = new MongoClient(uri, {
 
 const run = async () => {
   try {
-    const db = client.db("products-redux-db");
-    const productCollection = db.collection("products");
+    const db = client.db("blogs-redux-db");
+    const blogsCollection = db.collection("blogs");
 
-    app.get("/products", async (req, res) => {
-      const cursor = productCollection.find({});
+    app.get("/blogs", async (req, res) => {
+      const cursor = blogsCollection.find({});
       const product = await cursor.toArray();
 
       res.send({ status: true, data: product });
     });
 
-    app.post("/product", async (req, res) => {
+    app.post("/blog", async (req, res) => {
       const product = req.body;
-
-      const result = await productCollection.insertOne(product);
-
+      const result = await blogsCollection.insertOne(product);
       res.send(result);
     });
 
-    app.put("/product/:id", async (req, res) => {
+    app.put("/blog/:id", async (req, res) => {
       try {
         const id = req.params.id;
         const { _id, ...product } = req.body;
 
-        const getProduct = await productCollection.findOne({
+        const getProduct = await blogsCollection.findOne({
           id: ObjectId(id),
         });
         const query = { _id: ObjectId(id) };
         const updatedData = { $set: product };
 
         /* update product */
-        const result = await productCollection.updateOne(query, updatedData);
+        const result = await blogsCollection.updateOne(query, updatedData);
 
         res.send(result);
       } catch (err) {
@@ -56,10 +54,10 @@ const run = async () => {
       }
     });
 
-    app.delete("/product/:id", async (req, res) => {
+    app.delete("/blog/:id", async (req, res) => {
       const id = req.params.id;
 
-      const result = await productCollection.deleteOne({ _id: ObjectId(id) });
+      const result = await blogsCollection.deleteOne({ _id: ObjectId(id) });
       res.send(result);
     });
   } finally {
@@ -69,7 +67,7 @@ const run = async () => {
 run().catch((err) => console.log(err));
 
 app.get("/", (req, res) => {
-  res.send("Hello World!");
+  res.send({ status: true, message: "Welcome to the blog app api in Redux" });
 });
 
 app.listen(port, () => {
