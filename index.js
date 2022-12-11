@@ -37,13 +37,15 @@ const run = async () => {
     app.put("/blog/:id", async (req, res) => {
       try {
         const id = req.params.id;
-        const { _id, ...product } = req.body;
+        const blog = req.body;
 
+       
         const getProduct = await blogsCollection.findOne({
           id: ObjectId(id),
         });
+
         const query = { _id: ObjectId(id) };
-        const updatedData = { $set: product };
+        const updatedData = { $set: blog };
 
         /* update product */
         const result = await blogsCollection.updateOne(query, updatedData);
