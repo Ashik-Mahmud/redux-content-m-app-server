@@ -9,7 +9,7 @@ const cors = require("cors");
 app.use(cors());
 app.use(express.json());
 
-const uri = `mongodb://localhost:27017/blogs-redux-db`;
+const uri = process.env.MONGO_URI || `mongodb://localhost:27017/blogs-redux-db`;
 const client = new MongoClient(uri, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
